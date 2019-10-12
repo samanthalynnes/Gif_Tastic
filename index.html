@@ -4,36 +4,76 @@
 <head>
   <meta charset="utf-8">
   <title>Food Buttons</title>
+  <style type="text/css">
+    button,
+    div,
+    form,
+    input {
+      margin: 10px;
+    }
+  </style>
 </head>
 
 <body>
-  <button data-food="pizza">pizza</button>
-  <button data-food="cake">cake</button>
-  <button data-food="donuts">donuts</button>
-  <div id="gifs-appear-here">
+
+  <div class="container">
+
+    <!-- Rendered Buttons will get Dumped Here  -->
+    <div id="buttons-view"></div>
+
+    <form id="food-form">
+      <label for="food-input">Add a Food Item!</label>
+      <input type="text" id="food-input"><br>
+
+      <!-- Button triggers new food to be added -->
+      <input id="add-food" type="submit" value="Add a Food Item!">
+    </form>
+
+    <!-- Food will Get Dumped Here -->
+    <div id="food-view"></div>
+
+    <div id="gifs-appear-here">
   </div>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
   <script type="text/javascript">
-    // Adding click event listen listener to all buttons
+
+    $(document).ready(function() {
+
+    // Initial array of food items
+    var foods = ["Pizza", "Cake", "Donuts", "French Fries"];
+
+    // Create buttons for initial array to display
+       function displayFoodButtons() {
+       $("#buttons-view").empty();
+
+       for (var i = 0; i < foods.length; i++) {
+           var a = $("<button>");
+           a.addClass("food");
+           a.attr("data-name", foods[i]);
+           a.text(foods[i]);
+           $("#buttons-view").append(a);
+       }
+   }
+     displayFoodButtons();
+
+    // Create on click function to display giphys on button click
     $("button").on("click", function() {
-      // Grabbing and storing the data-animal property value from the button
-      var food = $(this).attr("data-food");
-
-      // Constructing a queryURL using the animal name
-      var queryURL = "https://api.giphy.com/v1/gifs/search?q=" +
-        food + "&api_key=BkaUZZWcFij6J7AoQj3WtPb1R2p9O6V9&limit=10";
-
-      // Performing an AJAX request with the queryURL
-      $.ajax({
-        url: queryURL,
-        method: "GET"
-      })
+     
+     var foods = $(this).attr("data-name");
+     var queryURL = "https://api.giphy.com/v1/gifs/search?q=" +
+        foods + "&api_key=OUi3P5HJbeNLc29IvNwOk9l9xN5XW3oU&limit=10";
+    console.log(queryURL);
+    //Perform ajax call
+     $.ajax({
+         url: queryURL,
+         method: "GET"
+     })
         // After data comes back from the request
         .then(function(response) {
           console.log(queryURL);
 
           console.log(response);
-          // storing the data from the AJAX request in the results variable
+        // storing the data from the AJAX request in the results variable
           var results = response.data;
 
           // Looping through each result item
@@ -58,6 +98,61 @@
             $("#gifs-appear-here").prepend(foodDiv);
           }
         });
+
+    // Function to let user add buttons
+     $("#add-food").on("click", function(event) {
+       event.preventDefault();
+       var food = $("#food-input").val().trim();
+       foods.push(food);
+       console.log(foods);
+       //$("#food-input").val('');
+
+       displayFoodButtons();
+   });
+   
+   //$(document).on("click", ".food", displayFoodButtons);
+
+   //displayFoodButtons();
+
+
+
+
+
+    // Function for dumping the JSON content for each button into the div
+   // function displayFoodInfo() {
+    // Grabbing and storing the data-animal property value from the button
+      // var food = $(this).attr("data-name");
+
+    // Constructing a queryURL using the animal name
+       // var queryURL = "https://api.giphy.com/v1/gifs/search?q=" +
+      //  food + "&api_key=BkaUZZWcFij6J7AoQj3WtPb1R2p9O6V9&limit=10";
+
+    // Performing an AJAX request with the queryURL
+      //  $.ajax({
+      //  url: queryURL,
+     //   method: "GET"
+  //  }).then(function(response) {
+       // console.log(queryURL);
+       // console.log(response);
+       // var results = response.data;
+       // for (var i = 0; i < results.length; i++) {
+       //     var foodDiv = $("<div");
+       //     var p = $("<p>").text(Rating: + results[i];
+       //     var foodImage = $("img>");
+       //     foodImage.att("src", results[i].images.fixed_height.url);
+       //     foodDiv.append(p);
+      //      foodDiv.append(foodImage);
+      //      $("#gif-apper-here").prepend(foodDiv);
+    //    }
+    });
+   // }
+
+
+
+  
+///////////////////////////////
+
+   
     });
   </script>
 </body>
